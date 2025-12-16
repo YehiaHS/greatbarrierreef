@@ -1058,7 +1058,7 @@
             const scene = scenes[index];
 
             // Update background
-            background.style.background = backgrounds[scene.background];
+            background.style.backgroundImage = backgrounds[scene.background];
 
             // Update mood
             moodOverlay.className = 'mood-overlay ' + scene.mood;
@@ -1225,7 +1225,7 @@
                     currentDialogue = prevScene.dialogues.length - 1;
 
                     // Update background and mood for previous scene
-                    background.style.background = backgrounds[prevScene.background];
+                    background.style.backgroundImage = backgrounds[prevScene.background];
                     moodOverlay.className = 'mood-overlay ' + prevScene.mood;
                 } else {
                     // Already at the start
