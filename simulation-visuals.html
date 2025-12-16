@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=1200, initial-scale=0.3, minimum-scale=0.1, maximum-scale=2.0, user-scalable=yes">
+    <title>Great Barrier Reef Press Conference - Visual Aids</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0077b6;
+            /* Ocean Blue */
+            --secondary: #e8f4f8;
+            /* Light Teal */
+            --accent: #FF6B6B;
+            /* Coral Red (for alerts/emphasis) */
+            --accent-green: #06d6a0;
+            /* Reef Green */
+            --text-dark: #1a1a2e;
+            --text-light: #ffffff;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --slide-shadow: 0 20px 50px rgba(0, 119, 182, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0077b6 0%, #023e8a 50%, #0a4c7a 100%);
+            color: var(--text-dark);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Wave Decorative Elements */
+        .wave-pattern {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .wave-top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,128C672,107,768,85,864,90.7C960,96,1056,128,1152,138.7C1248,149,1344,139,1392,133.3L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat;
+            background-size: cover;
+        }
+
+        .wave-bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,224L48,208C96,192,192,160,288,154.7C384,149,480,171,576,192C672,213,768,235,864,229.3C960,224,1056,192,1152,181.3C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat;
+            background-size: cover;
+        }
+
+        /* Slides Container */
+        .slider-container {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1200px;
+            z-index: 2;
+        }
+
+        .slide {
+            position: absolute;
+            width: 85%;
+            max-width: 1300px;
+            height: auto;
+            min-height: 75vh;
+            max-height: 90vh;
+            padding: 2.5rem 3.5rem;
+            background: var(--glass-white);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 2px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: var(--slide-shadow);
+            text-align: left;
+            opacity: 0;
+            transform: translateY(60px) rotateX(-5deg);
+            visibility: hidden;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0) rotateX(0deg);
+            visibility: visible;
+            z-index: 10;
+        }
+
+        /* Headers with Role Tags */
+        .role-tag {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-tag.govt {
+            background: #2d6a4f;
+        }
+
+        .role-tag.corporate {
+            background: #6c757d;
+        }
+
+        .role-tag.ngo {
+            background: #06d6a0;
+            color: var(--text-dark);
+        }
+
+        .role-tag.analyst {
+            background: #7b2cbf;
+        }
+
+        .role-tag.media {
+            background: #e63946;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            font-weight: 700;
+            line-height: 1.15;
+        }
+
+        h3 {
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        p {
+            font-size: 1.05rem;
+            line-height: 1.55;
+            color: #444;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        /* Cards & Boxes */
+        .floating-card {
+            background: #ffffff;
+            padding: 1.2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            margin-bottom: 0.8rem;
+        }
+
+        .stat-box {
+            background: var(--secondary);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-lbl {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        /* Speaker Card */
+        .speaker-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--secondary);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+
+        .speaker-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent-green));
+            color: white;
+        }
+
+        .speaker-info h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .speaker-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent-green));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '●';
+            position: absolute;
+            left: -18px;
+            top: 2px;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        /* Quote Box */
+        .quote-box {
+            background: linear-gradient(135deg, var(--primary), #023e8a);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .quote-box::before {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            opacity: 0.3;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 12px 12px 0;
+            margin: 0.5rem 0;
+        }
+
+        .highlight-box.alert {
+            background: #fee2e2;
+            border-left-color: var(--accent);
+        }
+
+        .highlight-box.success {
+            background: #d1fae5;
+            border-left-color: var(--accent-green);
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 3rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        button {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.6rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0, 119, 182, 0.4);
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 119, 182, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress {
+            position: fixed;
+            bottom: 2.5rem;
+            left: 3rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Key Points List */
+        .key-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-points li {
+            padding: 0.6rem 0 0.6rem 2rem;
+            position: relative;
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .key-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        /* Organization Logo Placeholder */
+        .org-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .org-badge .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Data Visualization Placeholder */
+        .chart-placeholder {
+            background: linear-gradient(135deg, #e8f4f8 0%, #caf0f8 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Sentiment Bars */
+        .sentiment-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .sentiment-bar .label {
+            width: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .sentiment-bar .bar-container {
+            flex: 1;
+            height: 24px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .sentiment-bar .bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease;
+        }
+
+        .sentiment-bar .bar-fill.positive {
+            background: linear-gradient(90deg, #06d6a0, #00b894);
+        }
+
+        .sentiment-bar .bar-fill.neutral {
+            background: linear-gradient(90deg, #ffc107, #fdcb6e);
+        }
+
+        .sentiment-bar .bar-fill.negative {
+            background: linear-gradient(90deg, #e63946, #ff6b6b);
+        }
+
+        .sentiment-bar .value {
+            width: 50px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide.active .floating-card,
+        .slide.active .speaker-card,
+        .slide.active .stat-box {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .slide.active .floating-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .slide.active .floating-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .slide.active .floating-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        /* Fullscreen Toggle */
+        .fullscreen-btn {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            z-index: 100;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wave-pattern wave-top"></div>
+    <div class="wave-pattern wave-bottom"></div>
+
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+
+    <div class="slider-container">
+
+        <!-- SLIDE 0: Title -->
+        <div class="slide active" data-id="0">
+            <div style="text-align: center; margin: auto;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🌊</div>
+                <h3 style="background: transparent; color: var(--primary);">Crisis Communication Simulation</h3>
+                <h1 style="font-size: 3rem; margin: 1rem 0;">Great Barrier Reef<br>Marine Park Incident</h1>
+                <p style="font-size: 1.3rem; color: #555; margin-bottom: 0.5rem;">Press Conference Roleplay</p>
+                <p style="font-size: 0.95rem; color: #777; margin-bottom: 1.5rem;">Tourist Vessel Incident Response</p>
+
+                <div
+                    style="background: rgba(255,255,255,0.9); padding: 1.2rem 2rem; border-radius: 16px; display: inline-block; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <p style="margin: 0; font-size: 0.95rem; color: #555;"><strong>Yehia Salem</strong> — Media
+                        Relations Officer / NGO Representative</p>
+                    <p style="margin: 0.3rem 0 0 0; font-size: 0.95rem; color: #555;"><strong>Farah Nagy</strong> —
+                        Government Spokesperson</p>
+                    <p style="margin: 0.3rem 0 0 0; font-size: 0.95rem; color: #555;"><strong>Janah Ahmed</strong> — PR
+                        Officer / AI Analyst</p>
+                </div>
+                <br>
+                <button onclick="nextSlide()">Begin Press Conference ➜</button>
+            </div>
+        </div>
+
+        <!-- SLIDE 1: Opening - Media Relations Officer -->
+        <div class="slide" data-id="1">
+            <span class="role-tag media">Opening Statement</span>
+            <h2>Welcome to the Press Conference</h2>
+
+            <div class="speaker-card">
+                <div class="speaker-avatar">🎙️</div>
+                <div class="speaker-info">
+                    <h4>Yehia Salem</h4>
+                    <p>Media Relations Officer — International Media Coordination</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <div class="floating-card">
+                        <h3>📋 Purpose of This Briefing</h3>
+                        <ul class="key-points">
+                            <li>Provide clear, accurate information</li>
+                            <li>Address the recent tourist vessel incident</li>
+                            <li>Introduce key stakeholders and their roles</li>
+                            <li>Ensure transparency in crisis response</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="floating-card" style="background: var(--secondary);">
+                        <h3>📍 Incident Overview</h3>
+                        <p><strong>Location:</strong> Great Barrier Reef Marine Park</p>
+                        <p><strong>Type:</strong> Tourist Vessel Incident</p>
+                        <p><strong>Status:</strong> All passengers safely rescued</p>
+                        <div class="highlight-box success">
+                            <strong>✓ No fatalities reported</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-4" style="margin-top: 1rem;">
+                <div class="stat-box">
+                    <span class="stat-val">5</span>
+                    <span class="stat-lbl">Speakers Today</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">100%</span>
+                    <span class="stat-lbl">Passengers Safe</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">24/7</span>
+                    <span class="stat-lbl">Response Active</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">🌏</span>
+                    <span class="stat-lbl">Global Attention</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Government Spokesperson -->
+        <div class="slide" data-id="2">
+            <span class="role-tag govt">Government Response</span>
+            <h2>Official Government Statement</h2>
+
+            <div class="speaker-card" style="background: #d8f3dc;">
+                <div class="speaker-avatar" style="background: linear-gradient(135deg, #2d6a4f, #40916c);">🏛️</div>
+                <div class="speaker-info">
+                    <h4>Farah Nagy <span style="font-weight: normal; color: #666;">as</span> Tanya Plibersek</h4>
+                    <p>Minister for the Environment and Water, Australia</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <div class="floating-card">
+                        <h3>📢 Key Messages</h3>
+                        <ul class="key-points">
+                            <li>All passengers rescued safely — no fatalities</li>
+                            <li>Emergency protocols activated immediately</li>
+                            <li>Maritime authorities and Queensland services responded</li>
+                            <li>Injured passengers received prompt medical attention</li>
+                            <li>Embassies of affected countries contacted</li>
+                        </ul>
+                    </div>
+
+                    <div class="floating-card" style="border-left: 4px solid var(--primary);">
+                        <h3>🔍 Formal Review Underway</h3>
+                        <p>Led by Australian Maritime Safety Authority (AMSA)</p>
+                        <p style="font-size: 0.9rem; color: #666;">Examining: Weather assessments, vessel capacity,
+                            operational decisions</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="floating-card" style="background: var(--secondary);">
+                        <h3>⏱️ Response Timeline</h3>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <strong>Incident Occurs</strong><br>
+                                <span style="font-size: 0.9rem; color: #666;">Challenging sea conditions</span>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>Emergency Protocols Activated</strong><br>
+                                <span style="font-size: 0.9rem; color: #666;">Immediate response initiated</span>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>Rescue Operations Complete</strong><br>
+                                <span style="font-size: 0.9rem; color: #666;">All passengers secured</span>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>Medical Assistance Provided</strong><br>
+                                <span style="font-size: 0.9rem; color: #666;">Injured receiving care</span>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>Investigation Launched</strong><br>
+                                <span style="font-size: 0.9rem; color: #666;">AMSA formal review</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-box" style="margin-top: 1rem;">
+                Our goal is to ensure transparency, strengthen safety standards, and maintain international confidence
+                in Australia's tourism and environmental protections.
+            </div>
+        </div>
+
+        <!-- SLIDE 3: PR Officer - Quicksilver Cruises -->
+        <div class="slide" data-id="3">
+            <span class="role-tag corporate">Corporate Response</span>
+            <h2>Quicksilver Cruises Statement</h2>
+
+            <div class="speaker-card" style="background: #f8f9fa;">
+                <div class="speaker-avatar" style="background: linear-gradient(135deg, #495057, #6c757d);">⚓</div>
+                <div class="speaker-info">
+                    <h4>Janah Ahmed</h4>
+                    <p>Public Relations Officer — Quicksilver Cruises</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <div class="floating-card">
+                        <h3>💬 Company Position</h3>
+                        <ul class="key-points">
+                            <li>Sincere concern for affected passengers</li>
+                            <li>Guest wellbeing is our top priority</li>
+                            <li>Crew acted quickly and professionally</li>
+                            <li>Established emergency procedures followed</li>
+                        </ul>
+                    </div>
+
+                    <div class="floating-card" style="border-left: 4px solid var(--accent-green);">
+                        <h3>🤝 Ongoing Support</h3>
+                        <p>Medical coordination for injured guests</p>
+                        <p>Direct communication with families</p>
+                        <p>Assistance with travel arrangements</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="floating-card" style="background: #fff3cd;">
+                        <h3>🔧 Internal Review Launched</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                <span style="font-size: 1.5rem;">🛡️</span>
+                                <div>
+                                    <strong>Safety Protocols</strong><br>
+                                    <span style="font-size: 0.85rem; color: #666;">Comprehensive assessment</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                <span style="font-size: 1.5rem;">🌦️</span>
+                                <div>
+                                    <strong>Weather Monitoring</strong><br>
+                                    <span style="font-size: 0.85rem; color: #666;">Enhanced forecasting systems</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.8rem;">
+                                <span style="font-size: 1.5rem;">👥</span>
+                                <div>
+                                    <strong>Crew Preparedness</strong><br>
+                                    <span style="font-size: 0.85rem; color: #666;">Training evaluation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box success" style="margin-top: 1rem; text-align: center;">
+                <strong>Commitment:</strong> Learning from this incident to reinforce safety standards across all
+                operations
+            </div>
+        </div>
+
+        <!-- SLIDE 4: NGO Representative - Greenpeace -->
+        <div class="slide" data-id="4">
+            <span class="role-tag ngo">Environmental Perspective</span>
+            <h2>Greenpeace Australia Pacific</h2>
+
+            <div class="speaker-card" style="background: #d1fae5;">
+                <div class="speaker-avatar" style="background: linear-gradient(135deg, #06d6a0, #00b894);">🌿</div>
+                <div class="speaker-info">
+                    <h4>Yehia Salem <span style="font-weight: normal; color: #666;">as</span> David Ritter</h4>
+                    <p>Chief Executive Officer — Greenpeace Australia Pacific</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <div class="floating-card">
+                        <h3>🌊 Our Position</h3>
+                        <ul class="key-points">
+                            <li>Relieved no lives were lost</li>
+                            <li>Reminder of pressures on sensitive ecosystems</li>
+                            <li>Welcome commitment to review practices</li>
+                            <li>Support stronger oversight mechanisms</li>
+                        </ul>
+                    </div>
+
+                    <div class="floating-card" style="border-left: 4px solid var(--accent-green);">
+                        <h3>🤝 Call for Cooperation</h3>
+                        <p>Collaboration between:</p>
+                        <ul style="margin: 0.5rem 0 0 1.2rem; font-size: 0.95rem;">
+                            <li>Regulators</li>
+                            <li>Tour operators</li>
+                            <li>Environmental organizations</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="floating-card" style="background: var(--secondary);">
+                        <h3>🐠 The Great Barrier Reef</h3>
+                        <div class="grid-2" style="gap: 1rem; margin-top: 0.5rem;">
+                            <div class="stat-box">
+                                <span class="stat-val">2,300</span>
+                                <span class="stat-lbl">km Length</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-val">1,500+</span>
+                                <span class="stat-lbl">Fish Species</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-val">400+</span>
+                                <span class="stat-lbl">Coral Types</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-val">2M+</span>
+                                <span class="stat-lbl">Annual Visitors</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-box" style="margin-top: 1rem; background: linear-gradient(135deg, #06d6a0, #00b894);">
+                Responsible tourism and long-term protection of the reef must go hand in hand to prevent similar
+                incidents in the future.
+            </div>
+        </div>
+
+        <!-- SLIDE 5: AI Analyst - CSIRO Data61 -->
+        <div class="slide" data-id="5">
+            <span class="role-tag analyst">Data Analysis</span>
+            <h2>Media Sentiment & Public Response</h2>
+
+            <div class="speaker-card" style="background: #ede9fe;">
+                <div class="speaker-avatar" style="background: linear-gradient(135deg, #7b2cbf, #9b59b6);">📊</div>
+                <div class="speaker-info">
+                    <h4>Janah Ahmed <span style="font-weight: normal; color: #666;">as</span> Prof. Jon Whittle</h4>
+                    <p>Director of Data61, CSIRO — AI and Data Analyst</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <div class="floating-card">
+                        <h3>📈 Current Media Analysis</h3>
+                        <div class="sentiment-bar">
+                            <span class="label">Safety Focus</span>
+                            <div class="bar-container">
+                                <div class="bar-fill positive" style="width: 75%;"></div>
+                            </div>
+                            <span class="value">75%</span>
+                        </div>
+                        <div class="sentiment-bar">
+                            <span class="label">Environment</span>
+                            <div class="bar-container">
+                                <div class="bar-fill positive" style="width: 60%;"></div>
+                            </div>
+                            <span class="value">60%</span>
+                        </div>
+                        <div class="sentiment-bar">
+                            <span class="label">Tourism Trust</span>
+                            <div class="bar-container">
+                                <div class="bar-fill neutral" style="width: 45%;"></div>
+                            </div>
+                            <span class="value">45%</span>
+                        </div>
+                        <div class="sentiment-bar">
+                            <span class="label">Uncertainty</span>
+                            <div class="bar-container">
+                                <div class="bar-fill negative" style="width: 30%;"></div>
+                            </div>
+                            <span class="value">30%</span>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box alert">
+                        <strong>⚠️ Alert:</strong> Misinformation identified on social media platforms
+                    </div>
+                </div>
+                <div>
+                    <div class="floating-card" style="background: var(--secondary);">
+                        <h3>🌍 International Coverage</h3>
+                        <p>Heightened attention from countries whose citizens were involved:</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                            <span class="org-badge">🇬🇧 UK Media</span>
+                            <span class="org-badge">🇺🇸 US Media</span>
+                            <span class="org-badge">🇪🇺 European</span>
+                            <span class="org-badge">🇯🇵 Asia-Pacific</span>
+                        </div>
+                    </div>
+
+                    <div class="floating-card" style="border-left: 4px solid #7b2cbf;">
+                        <h3>💡 Key Recommendation</h3>
+                        <p><strong>Transparent, consistent communication</strong> over the coming days will be critical
+                            for:</p>
+                        <ul style="margin: 0.5rem 0 0 1.2rem; font-size: 0.95rem;">
+                            <li>Reducing public uncertainty</li>
+                            <li>Maintaining international trust</li>
+                            <li>Protecting Australia's tourism reputation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Media Relations - Closing -->
+        <div class="slide" data-id="6">
+            <span class="role-tag media">International Media Perspective</span>
+            <h2>BBC World News Statement</h2>
+
+            <div class="speaker-card" style="background: #fee2e2;">
+                <div class="speaker-avatar" style="background: linear-gradient(135deg, #e63946, #d62828);">📺</div>
+                <div class="speaker-info">
+                    <h4>Yehia Salem <span style="font-weight: normal; color: #666;">as</span> Shaun Ley</h4>
+                    <p>Senior International Correspondent — BBC World News</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <div class="floating-card">
+                        <h3>🌐 Global Interest</h3>
+                        <p>Strong international focus on:</p>
+                        <ul class="key-points">
+                            <li>Safety standards for marine tourism</li>
+                            <li>Environmental protection measures</li>
+                            <li>Crisis response protocols</li>
+                            <li>Transparent communication practices</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="floating-card" style="background: var(--secondary);">
+                        <h3>📰 Media Acknowledgements</h3>
+                        <ul class="key-points">
+                            <li>Clarity of information shared today</li>
+                            <li>Commitment to transparency noted</li>
+                            <li>Continued access to verified updates essential</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 1rem; text-align: center;">
+                <strong>📢 Public Advisory:</strong> We encourage the public to rely on <strong>official
+                    sources</strong> as further details emerge.
+            </div>
+
+            <div class="grid-3" style="margin-top: 1.5rem;">
+                <div class="stat-box">
+                    <span class="stat-val">🌏</span>
+                    <span class="stat-lbl">Global Coverage</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">✓</span>
+                    <span class="stat-lbl">Verified Sources</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">24/7</span>
+                    <span class="stat-lbl">Updates Available</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Closing Statement -->
+        <div class="slide" data-id="7">
+            <div style="text-align: center; margin: auto;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🎤</div>
+                <h2 style="font-size: 2.5rem;">Thank You For Attending</h2>
+                <p style="font-size: 1.3rem; color: #555; margin: 1rem 0;">Today's Press Conference</p>
+
+                <div class="quote-box" style="max-width: 700px; margin: 2rem auto; text-align: center;">
+                    Further updates will be provided as the review continues. Official statements will be released
+                    through verified government and organizational channels.
+                </div>
+
+                <div class="grid-3" style="max-width: 800px; margin: 2rem auto;">
+                    <div class="stat-box">
+                        <span class="stat-val">🏛️</span>
+                        <span class="stat-lbl">Government</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val">⚓</span>
+                        <span class="stat-lbl">Quicksilver Cruises</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val">🌿</span>
+                        <span class="stat-lbl">Greenpeace</span>
+                    </div>
+                </div>
+
+                <div
+                    style="background: rgba(255,255,255,0.9); padding: 1.5rem 2rem; border-radius: 16px; display: inline-block; margin-top: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <p style="margin: 0; font-size: 1.1rem; color: var(--primary); font-weight: 600;">Crisis
+                        Communication Simulation</p>
+                    <p style="margin: 0.5rem 0 0 0; color: #666;">Yehia Salem • Farah Nagy • Janah Ahmed</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="progress"><span id="currentSlide">1</span> / <span id="totalSlides">8</span></div>
+
+    <div class="controls">
+        <button id="prevBtn" onclick="prevSlide()">← Prev</button>
+        <button id="nextBtn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+
+        document.getElementById('totalSlides').textContent = total;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            current = index;
+            document.getElementById('currentSlide').textContent = current + 1;
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current === total - 1;
+        }
+
+        function nextSlide() {
+            if (current < total - 1) {
+                showSlide(current + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (current > 0) {
+                showSlide(current - 1);
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Great Barrier Reef - Visual Novel</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            cursor: default;
+        }
+
+        /* Main Game Container */
+        .vn-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Background Layer */
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 1.5s ease, filter 0.5s ease;
+            z-index: 1;
+        }
+
+        .background.fade-out {
+            opacity: 0;
+        }
+
+        /* Overlay for mood */
+        .mood-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            transition: background 1s ease;
+        }
+
+        .mood-overlay.neutral {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+        }
+
+        .mood-overlay.tense {
+            background: linear-gradient(180deg, rgba(50, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+        }
+
+        .mood-overlay.hopeful {
+            background: linear-gradient(180deg, rgba(0, 50, 80, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
+        }
+
+        .mood-overlay.calm {
+            background: linear-gradient(180deg, rgba(0, 80, 60, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
+        }
+
+        /* Character Sprites */
+        .character-container {
+            position: absolute;
+            bottom: 220px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .character {
+            width: 300px;
+            height: 400px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.3s ease;
+            filter: brightness(1);
+        }
+
+        .character.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .character.speaking {
+            filter: brightness(1.1) drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+        }
+
+        .character.dimmed {
+            filter: brightness(0.6);
+        }
+
+        /* Dialogue Box */
+        .dialogue-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 20px 40px 30px;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.95) 30%);
+        }
+
+        .dialogue-box {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(15, 25, 35, 0.95);
+            border: 2px solid rgba(100, 180, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px 30px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5),
+                inset 0 0 60px rgba(0, 100, 150, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .speaker-name {
+            font-family: 'Merriweather', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #64b5f6;
+            margin-bottom: 8px;
+            padding-left: 5px;
+            border-left: 3px solid #64b5f6;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .speaker-name.govt {
+            color: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .speaker-name.corporate {
+            color: #9e9e9e;
+            border-color: #9e9e9e;
+        }
+
+        .speaker-name.ngo {
+            color: #26a69a;
+            border-color: #26a69a;
+        }
+
+        .speaker-name.analyst {
+            color: #ab47bc;
+            border-color: #ab47bc;
+        }
+
+        .speaker-name.media {
+            color: #ef5350;
+            border-color: #ef5350;
+        }
+
+        .dialogue-text {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            color: #e0e0e0;
+            min-height: 80px;
+        }
+
+        .dialogue-text .highlight {
+            color: #64b5f6;
+            font-weight: 600;
+        }
+
+        /* Typewriter cursor */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background: #64b5f6;
+            margin-left: 2px;
+            animation: blink 0.8s infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Click indicator */
+        .click-indicator {
+            position: absolute;
+            bottom: 15px;
+            right: 30px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .click-indicator.visible {
+            opacity: 1;
+        }
+
+        .click-indicator .arrow {
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(5px);
+            }
+        }
+
+        /* Scene Title */
+        .scene-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        .scene-title.visible {
+            opacity: 1;
+        }
+
+        .scene-title h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .scene-title h2 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(100, 181, 246, 0.3);
+            border-color: #64b5f6;
+        }
+
+        .control-btn.active {
+            background: rgba(100, 181, 246, 0.4);
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #64b5f6, #26a69a);
+            z-index: 15;
+            transition: width 0.3s ease;
+        }
+
+        /* Sound wave indicator */
+        .sound-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 20px;
+            z-index: 100;
+            opacity: 0.6;
+        }
+
+        .sound-bar {
+            width: 4px;
+            background: #64b5f6;
+            border-radius: 2px;
+            animation: soundWave 1s infinite ease-in-out;
+        }
+
+        .sound-bar:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .sound-bar:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .sound-bar:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .sound-bar:nth-child(4) {
+            animation-delay: 0.1s;
+        }
+
+        .sound-bar:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes soundWave {
+
+            0%,
+            100% {
+                height: 8px;
+            }
+
+            50% {
+                height: 20px;
+            }
+        }
+
+        .sound-indicator.muted .sound-bar {
+            animation: none;
+            height: 4px;
+            background: #666;
+        }
+
+        /* Title Screen */
+        .title-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #023e8a 0%, #0077b6 50%, #00b4d8 100%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.5s ease;
+        }
+
+        .title-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .title-screen h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .title-screen .subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+        }
+
+        .start-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+            padding: 20px 60px;
+            font-size: 1.2rem;
+            font-family: 'Merriweather', serif;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .start-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Effect: Screen shake */
+        .vn-container.shake {
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-5px);
+            }
+
+            40% {
+                transform: translateX(5px);
+            }
+
+            60% {
+                transform: translateX(-3px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
+        }
+
+        /* Effect: Flash */
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 25;
+            transition: opacity 0.1s ease;
+        }
+
+        .flash-overlay.active {
+            opacity: 1;
+        }
+
+        /* SVG Character Portraits */
+        .portrait-frame {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid rgba(100, 181, 246, 0.5);
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(100, 181, 246, 0.2);
+            z-index: 8;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .portrait-frame.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .portrait-frame.speaking {
+            border-color: #64b5f6;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(100, 181, 246, 0.5),
+                inset 0 0 30px rgba(100, 181, 246, 0.3);
+        }
+
+        .portrait-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        /* Position portraits */
+        .portrait-left {
+            left: 60px;
+            bottom: 250px;
+        }
+
+        .portrait-center {
+            left: 50%;
+            bottom: 280px;
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .portrait-right {
+            right: 60px;
+            bottom: 250px;
+        }
+
+        .portrait-center.visible {
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        /* Vignette effect */
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+            pointer-events: none;
+            z-index: 3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Title Screen -->
+    <div class="title-screen" id="titleScreen">
+        <h1>🌊 Great Barrier Reef</h1>
+        <p class="subtitle">Crisis Communication</p>
+        <button class="start-btn" onclick="startGame()">Begin</button>
+    </div>
+
+    <div class="vn-container" id="vnContainer">
+        <!-- Background -->
+        <div class="background" id="background"></div>
+
+        <!-- Mood Overlay -->
+        <div class="mood-overlay neutral" id="moodOverlay"></div>
+
+        <!-- Vignette -->
+        <div class="vignette"></div>
+
+        <!-- Flash Effect -->
+        <div class="flash-overlay" id="flashOverlay"></div>
+
+        <!-- Scene Title -->
+        <div class="scene-title" id="sceneTitle">
+            <h1 id="sceneTitleText"></h1>
+            <h2 id="sceneSubtitle"></h2>
+        </div>
+
+        <!-- Character Portraits -->
+        <div class="portrait-frame portrait-center" id="portrait">
+            <img id="portraitImg" src="" alt="Character Portrait">
+        </div>
+
+        <!-- Dialogue Container -->
+        <div class="dialogue-container" id="dialogueContainer" style="opacity: 0;">
+            <div class="dialogue-box">
+                <div class="speaker-name" id="speakerName">Speaker</div>
+                <div class="dialogue-text" id="dialogueText"></div>
+                <div class="click-indicator" id="clickIndicator">
+                    Click to continue <span class="arrow">▼</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls" id="controlsContainer" style="display: none;">
+        <button class="control-btn" onclick="goBack()" id="backBtn">◀ Back</button>
+        <button class="control-btn" onclick="toggleAuto()" id="autoBtn">Auto</button>
+        <button class="control-btn" onclick="toggleSound()" id="soundBtn">🔊</button>
+        <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
+    </div>
+
+    <!-- Sound Indicator -->
+    <div class="sound-indicator" id="soundIndicator" style="display: none;">
+        <div class="sound-bar"></div>
+        <div class="sound-bar"></div>
+        <div class="sound-bar"></div>
+        <div class="sound-bar"></div>
+        <div class="sound-bar"></div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="ambientAudio" loop>
+        <source src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Game State
+        let currentScene = 0;
+        let currentDialogue = 0;
+        let isTyping = false;
+        let typewriterInterval = null;
+        let autoMode = false;
+        let soundEnabled = true;
+        let gameStarted = false;
+
+        // Character Portrait Images - maps speaker names to their portrait images
+        // Each person may play multiple characters with different outfits
+        const portraitImages = {
+            // Yehia plays: Media Relations Officer, David Ritter (NGO), Shaun Ley (BBC journalist)
+            'Yehia Salem': 'portraits/yehia_media.png',
+            'David Ritter': 'portraits/yehia_ngo.png',
+            'Shaun Ley': 'portraits/yehia_journalist.png',
+            'Media Relations': 'portraits/yehia_media.png',
+
+            // Farah plays: Tanya Plibersek (Government Minister)
+            'Farah Nagy': 'portraits/farah_govt.png',
+            'Tanya Plibersek': 'portraits/farah_govt.png',
+
+            // Janah plays: Corporate PR Officer, Prof. Jon Whittle (Analyst)
+            'Janah Ahmed': 'portraits/janah_corporate.png',
+            'Prof. Jon Whittle': 'portraits/janah_analyst.png'
+        };
+
+        // Fallback portraits by type (uses Yehia media as default)
+        const fallbackPortraits = {
+            media: 'portraits/yehia_media.png',
+            govt: 'portraits/farah_govt.png',
+            corporate: 'portraits/janah_corporate.png',
+            ngo: 'portraits/yehia_ngo.png',
+            analyst: 'portraits/janah_analyst.png'
+        };
+
+        // Background images with generated artwork
+        const backgrounds = {
+            pressRoom: 'url("backgrounds/pressroom.png")',
+            ocean: 'url("backgrounds/ocean.png")',
+            reef: 'url("backgrounds/reef.png")',
+            emergency: 'url("backgrounds/emergency.png")',
+            data: 'url("backgrounds/data.png")',
+            sunset: 'url("backgrounds/sunset.png")'
+        };
+
+        // Scene Data
+        const scenes = [
+            // Scene 0: Opening
+            {
+                title: "Press Conference",
+                subtitle: "Great Barrier Reef Marine Park",
+                background: 'pressRoom',
+                mood: 'neutral',
+                dialogues: [
+                    {
+                        speaker: "Yehia Salem",
+                        role: "Media Relations Officer",
+                        type: "media",
+                        text: "Good afternoon, everyone. Thank you for joining us today.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Yehia Salem",
+                        role: "Media Relations Officer",
+                        type: "media",
+                        text: "My name is Yehia, and I am speaking today in my role as <span class='highlight'>Media Relations Officer</span>, representing international media coordination.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Yehia Salem",
+                        role: "Media Relations Officer",
+                        type: "media",
+                        text: "We are here to provide <span class='highlight'>clear and accurate information</span> regarding the recent incident involving a tourist vessel operating in the Great Barrier Reef Marine Park.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Yehia Salem",
+                        role: "Media Relations Officer",
+                        type: "media",
+                        text: "Each speaker will introduce themselves and explain their role in managing the situation.",
+                        effect: null
+                    }
+                ]
+            },
+            // Scene 1: Government Response
+            {
+                title: "Government Response",
+                subtitle: "Minister for the Environment",
+                background: 'ocean',
+                mood: 'hopeful',
+                dialogues: [
+                    {
+                        speaker: "Farah Nagy",
+                        role: "as Tanya Plibersek — Minister for Environment",
+                        type: "govt",
+                        text: "Good afternoon. My name is Farah, and today I am speaking in the role of <span class='highlight'>Tanya Plibersek</span>, Australia's Minister for the Environment and Water.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Tanya Plibersek",
+                        role: "Government Spokesperson",
+                        type: "govt",
+                        text: "Earlier this week, a licensed tourist vessel operating within the Great Barrier Reef Marine Park experienced an incident during challenging sea conditions.",
+                        effect: 'shake'
+                    },
+                    {
+                        speaker: "Tanya Plibersek",
+                        role: "Government Spokesperson",
+                        type: "govt",
+                        text: "I want to clearly state that <span class='highlight'>all passengers were rescued safely</span> and there were no fatalities.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Tanya Plibersek",
+                        role: "Government Spokesperson",
+                        type: "govt",
+                        text: "Emergency response protocols were activated immediately, involving maritime authorities and Queensland emergency services.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Tanya Plibersek",
+                        role: "Government Spokesperson",
+                        type: "govt",
+                        text: "Injured passengers received prompt medical attention, and we are in contact with the embassies of the countries whose citizens were involved.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Tanya Plibersek",
+                        role: "Government Spokesperson",
+                        type: "govt",
+                        text: "A formal review led by the <span class='highlight'>Australian Maritime Safety Authority</span> is currently underway.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Tanya Plibersek",
+                        role: "Government Spokesperson",
+                        type: "govt",
+                        text: "Our goal is to ensure transparency, strengthen safety standards, and maintain international confidence in Australia's tourism and environmental protections.",
+                        effect: null
+                    }
+                ]
+            },
+            // Scene 2: Corporate Response
+            {
+                title: "Corporate Statement",
+                subtitle: "Quicksilver Cruises",
+                background: 'reef',
+                mood: 'neutral',
+                dialogues: [
+                    {
+                        speaker: "Janah Ahmed",
+                        role: "Public Relations Officer — Quicksilver Cruises",
+                        type: "corporate",
+                        text: "Good afternoon. My name is Janah, and I am the <span class='highlight'>Public Relations Officer</span> for Quicksilver Cruises.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Janah Ahmed",
+                        role: "PR Officer — Quicksilver Cruises",
+                        type: "corporate",
+                        text: "On behalf of the company, I would like to express our <span class='highlight'>sincere concern</span> for the passengers affected by this incident.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Janah Ahmed",
+                        role: "PR Officer — Quicksilver Cruises",
+                        type: "corporate",
+                        text: "We understand that this experience was distressing, and the wellbeing of our guests remains our <span class='highlight'>top priority</span>.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Janah Ahmed",
+                        role: "PR Officer — Quicksilver Cruises",
+                        type: "corporate",
+                        text: "Our crew acted quickly and followed established emergency procedures, working closely with authorities to ensure every passenger was safely assisted.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Janah Ahmed",
+                        role: "PR Officer — Quicksilver Cruises",
+                        type: "corporate",
+                        text: "We are providing ongoing support to injured guests, including medical coordination and communication with their families.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Janah Ahmed",
+                        role: "PR Officer — Quicksilver Cruises",
+                        type: "corporate",
+                        text: "We have launched a <span class='highlight'>comprehensive internal review</span> of our operations, focusing on safety protocols, weather monitoring, and crew preparedness.",
+                        effect: null
+                    }
+                ]
+            },
+            // Scene 3: NGO Response
+            {
+                title: "Environmental Perspective",
+                subtitle: "Greenpeace Australia Pacific",
+                background: 'reef',
+                mood: 'calm',
+                dialogues: [
+                    {
+                        speaker: "Yehia Salem",
+                        role: "as David Ritter — CEO, Greenpeace Australia Pacific",
+                        type: "ngo",
+                        text: "My name is Yehia, and today I am speaking in the role of <span class='highlight'>David Ritter</span>, Chief Executive Officer of Greenpeace Australia Pacific.",
+                        effect: null
+                    },
+                    {
+                        speaker: "David Ritter",
+                        role: "CEO — Greenpeace Australia Pacific",
+                        type: "ngo",
+                        text: "While we are relieved that there was <span class='highlight'>no loss of life</span>, this incident serves as an important reminder of the pressures faced by sensitive ecosystems like the Great Barrier Reef.",
+                        effect: null
+                    },
+                    {
+                        speaker: "David Ritter",
+                        role: "CEO — Greenpeace Australia Pacific",
+                        type: "ngo",
+                        text: "We acknowledge the rapid emergency response and welcome the commitment shown by both the government and the tour operator to review safety and environmental practices.",
+                        effect: null
+                    },
+                    {
+                        speaker: "David Ritter",
+                        role: "CEO — Greenpeace Australia Pacific",
+                        type: "ngo",
+                        text: "Our role is to support <span class='highlight'>stronger oversight</span>, responsible tourism, and long-term protection of the reef.",
+                        effect: null
+                    },
+                    {
+                        speaker: "David Ritter",
+                        role: "CEO — Greenpeace Australia Pacific",
+                        type: "ngo",
+                        text: "We believe that <span class='highlight'>cooperation</span> between regulators, operators, and environmental organizations is essential to prevent similar incidents in the future.",
+                        effect: null
+                    }
+                ]
+            },
+            // Scene 4: AI Analyst
+            {
+                title: "Data Analysis",
+                subtitle: "CSIRO Data61",
+                background: 'data',
+                mood: 'neutral',
+                dialogues: [
+                    {
+                        speaker: "Janah Ahmed",
+                        role: "as Prof. Jon Whittle — Director, Data61 CSIRO",
+                        type: "analyst",
+                        text: "Good afternoon. My name is Janah, and I am speaking in the role of <span class='highlight'>Professor Jon Whittle</span>, Director of Data61 at CSIRO, supporting the crisis response as an AI and data analyst.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Prof. Jon Whittle",
+                        role: "Director of Data61 — CSIRO",
+                        type: "analyst",
+                        text: "My role is to analyze <span class='highlight'>international media coverage</span> and public sentiment related to this incident.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Prof. Jon Whittle",
+                        role: "Director of Data61 — CSIRO",
+                        type: "analyst",
+                        text: "Current data shows <span class='highlight'>heightened attention</span> from several countries, particularly those whose citizens were involved.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Prof. Jon Whittle",
+                        role: "Director of Data61 — CSIRO",
+                        type: "analyst",
+                        text: "Online discussions are largely focused on passenger safety and environmental responsibility.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Prof. Jon Whittle",
+                        role: "Director of Data61 — CSIRO",
+                        type: "analyst",
+                        text: "We have also identified some <span class='highlight'>misinformation</span> circulating on social media, which is common in fast-developing situations.",
+                        effect: 'flash'
+                    },
+                    {
+                        speaker: "Prof. Jon Whittle",
+                        role: "Director of Data61 — CSIRO",
+                        type: "analyst",
+                        text: "Our analysis indicates that <span class='highlight'>transparent, consistent communication</span> over the coming days will be critical in reducing uncertainty, maintaining public trust, and protecting Australia's international tourism reputation.",
+                        effect: null
+                    }
+                ]
+            },
+            // Scene 5: Media Closing
+            {
+                title: "Media Perspective",
+                subtitle: "BBC World News",
+                background: 'pressRoom',
+                mood: 'hopeful',
+                dialogues: [
+                    {
+                        speaker: "Yehia Salem",
+                        role: "as Shaun Ley — Senior Correspondent, BBC World News",
+                        type: "media",
+                        text: "My name is Yehia, and I am speaking today in the role of <span class='highlight'>Shaun Ley</span>, Senior International Correspondent for BBC World News.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Shaun Ley",
+                        role: "Senior Correspondent — BBC World News",
+                        type: "media",
+                        text: "From an international media perspective, there is strong <span class='highlight'>global interest</span> in how this incident is being handled.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Shaun Ley",
+                        role: "Senior Correspondent — BBC World News",
+                        type: "media",
+                        text: "Particularly regarding safety standards and environmental protection.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Shaun Ley",
+                        role: "Senior Correspondent — BBC World News",
+                        type: "media",
+                        text: "We acknowledge the <span class='highlight'>clarity of the information</span> shared today and the commitment to transparency.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Shaun Ley",
+                        role: "Senior Correspondent — BBC World News",
+                        type: "media",
+                        text: "Continued access to verified updates will be essential in ensuring accurate reporting and maintaining international confidence.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Shaun Ley",
+                        role: "Senior Correspondent — BBC World News",
+                        type: "media",
+                        text: "We encourage the public to rely on <span class='highlight'>official sources</span> as further details emerge.",
+                        effect: null
+                    }
+                ]
+            },
+            // Scene 6: Closing
+            {
+                title: "Thank You",
+                subtitle: "End of Press Conference",
+                background: 'sunset',
+                mood: 'calm',
+                dialogues: [
+                    {
+                        speaker: "Media Relations",
+                        role: "Closing Statement",
+                        type: "media",
+                        text: "Thank you all for attending today's press conference.",
+                        effect: null
+                    },
+                    {
+                        speaker: "Media Relations",
+                        role: "Closing Statement",
+                        type: "media",
+                        text: "Further updates will be provided as the review continues.",
+                        effect: null
+                    },
+                    {
+                        speaker: "",
+                        role: "",
+                        type: "media",
+                        text: "<span class='highlight'>— End of Simulation —</span>",
+                        effect: null
+                    }
+                ]
+            }
+        ];
+
+        // DOM Elements
+        const titleScreen = document.getElementById('titleScreen');
+        const vnContainer = document.getElementById('vnContainer');
+        const background = document.getElementById('background');
+        const moodOverlay = document.getElementById('moodOverlay');
+        const sceneTitle = document.getElementById('sceneTitle');
+        const sceneTitleText = document.getElementById('sceneTitleText');
+        const sceneSubtitle = document.getElementById('sceneSubtitle');
+        const portrait = document.getElementById('portrait');
+        const portraitImg = document.getElementById('portraitImg');
+        const dialogueContainer = document.getElementById('dialogueContainer');
+        const speakerName = document.getElementById('speakerName');
+        const dialogueText = document.getElementById('dialogueText');
+        const clickIndicator = document.getElementById('clickIndicator');
+        const progressBar = document.getElementById('progressBar');
+        const flashOverlay = document.getElementById('flashOverlay');
+        const controlsContainer = document.getElementById('controlsContainer');
+        const soundIndicator = document.getElementById('soundIndicator');
+        const ambientAudio = document.getElementById('ambientAudio');
+        const clickSound = document.getElementById('clickSound');
+
+        // Start Game
+        function startGame() {
+            titleScreen.classList.add('hidden');
+            controlsContainer.style.display = 'flex';
+            soundIndicator.style.display = 'flex';
+            gameStarted = true;
+
+            // Try to play ambient sound
+            if (soundEnabled) {
+                ambientAudio.volume = 0.3;
+                ambientAudio.play().catch(e => console.log('Audio autoplay blocked'));
+            }
+
+            setTimeout(() => {
+                loadScene(0);
+            }, 500);
+        }
+
+        // Load Scene
+        function loadScene(index) {
+            if (index >= scenes.length) return;
+
+            currentScene = index;
+            currentDialogue = 0;
+            const scene = scenes[index];
+
+            // Update background
+            background.style.background = backgrounds[scene.background];
+
+            // Update mood
+            moodOverlay.className = 'mood-overlay ' + scene.mood;
+
+            // Show scene title
+            sceneTitleText.textContent = scene.title;
+            sceneSubtitle.textContent = scene.subtitle;
+            sceneTitle.classList.add('visible');
+            dialogueContainer.style.opacity = '0';
+            portrait.classList.remove('visible');
+
+            setTimeout(() => {
+                sceneTitle.classList.remove('visible');
+                setTimeout(() => {
+                    dialogueContainer.style.opacity = '1';
+                    showDialogue();
+                }, 500);
+            }, 2000);
+
+            updateProgress();
+        }
+
+        // Show Dialogue
+        function showDialogue() {
+            const scene = scenes[currentScene];
+            if (currentDialogue >= scene.dialogues.length) {
+                // Move to next scene
+                if (currentScene < scenes.length - 1) {
+                    loadScene(currentScene + 1);
+                }
+                return;
+            }
+
+            const dialogue = scene.dialogues[currentDialogue];
+
+            // Update speaker
+            if (dialogue.speaker) {
+                speakerName.textContent = dialogue.speaker;
+                speakerName.className = 'speaker-name ' + dialogue.type;
+
+                // Show portrait - first check speaker name, then fallback to type
+                const portraitPath = portraitImages[dialogue.speaker] || fallbackPortraits[dialogue.type];
+                if (portraitPath) {
+                    portraitImg.src = portraitPath;
+                    portrait.classList.add('visible', 'speaking');
+                }
+            } else {
+                speakerName.textContent = '';
+            }
+
+            // Apply effect
+            if (dialogue.effect === 'shake') {
+                vnContainer.classList.add('shake');
+                setTimeout(() => vnContainer.classList.remove('shake'), 400);
+            } else if (dialogue.effect === 'flash') {
+                flashOverlay.classList.add('active');
+                setTimeout(() => flashOverlay.classList.remove('active'), 100);
+            }
+
+            // Typewriter effect
+            typewriterEffect(dialogue.text);
+
+            updateProgress();
+        }
+
+        // Typewriter Effect
+        function typewriterEffect(text) {
+            isTyping = true;
+            clickIndicator.classList.remove('visible');
+            dialogueText.innerHTML = '';
+
+            // Strip HTML for typing, then restore
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = text;
+            const plainText = tempDiv.textContent;
+
+            let charIndex = 0;
+            const cursor = '<span class="cursor"></span>';
+
+            clearInterval(typewriterInterval);
+            typewriterInterval = setInterval(() => {
+                if (charIndex < plainText.length) {
+                    // Reconstruct with HTML
+                    dialogueText.innerHTML = text.substring(0, getHtmlPosition(text, charIndex + 1)) + cursor;
+                    charIndex++;
+
+                    // Play typing sound occasionally
+                    if (soundEnabled && charIndex % 5 === 0) {
+                        // Light click sound simulation
+                    }
+                } else {
+                    clearInterval(typewriterInterval);
+                    isTyping = false;
+                    dialogueText.innerHTML = text;
+                    clickIndicator.classList.add('visible');
+
+                    if (autoMode) {
+                        setTimeout(advance, 2500);
+                    }
+                }
+            }, 30);
+        }
+
+        // Helper to find HTML position
+        function getHtmlPosition(html, plainTextPos) {
+            let plainCount = 0;
+            let inTag = false;
+
+            for (let i = 0; i < html.length; i++) {
+                if (html[i] === '<') inTag = true;
+                else if (html[i] === '>') inTag = false;
+                else if (!inTag) plainCount++;
+
+                if (plainCount >= plainTextPos) return i + 1;
+            }
+            return html.length;
+        }
+
+        // Advance dialogue
+        function advance() {
+            if (!gameStarted) return;
+
+            if (isTyping) {
+                // Skip typewriter
+                clearInterval(typewriterInterval);
+                const scene = scenes[currentScene];
+                const dialogue = scene.dialogues[currentDialogue];
+                dialogueText.innerHTML = dialogue.text;
+                isTyping = false;
+                clickIndicator.classList.add('visible');
+                return;
+            }
+
+            // Play click sound
+            if (soundEnabled) {
+                clickSound.currentTime = 0;
+                clickSound.volume = 0.2;
+                clickSound.play().catch(e => { });
+            }
+
+            currentDialogue++;
+            showDialogue();
+        }
+
+        // Go back to previous dialogue
+        function goBack() {
+            if (!gameStarted) return;
+
+            // Clear any ongoing typewriter effect
+            if (isTyping) {
+                clearInterval(typewriterInterval);
+                isTyping = false;
+            }
+
+            // Go to previous dialogue
+            currentDialogue--;
+
+            // If we're before the first dialogue of current scene
+            if (currentDialogue < 0) {
+                // Go to previous scene
+                if (currentScene > 0) {
+                    currentScene--;
+                    const prevScene = scenes[currentScene];
+                    currentDialogue = prevScene.dialogues.length - 1;
+
+                    // Update background and mood for previous scene
+                    background.style.background = backgrounds[prevScene.background];
+                    moodOverlay.className = 'mood-overlay ' + prevScene.mood;
+                } else {
+                    // Already at the start
+                    currentDialogue = 0;
+                    return;
+                }
+            }
+
+            // Show the dialogue
+            showDialogue();
+            updateProgress();
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const totalDialogues = scenes.reduce((sum, s) => sum + s.dialogues.length, 0);
+            let current = 0;
+            for (let i = 0; i < currentScene; i++) {
+                current += scenes[i].dialogues.length;
+            }
+            current += currentDialogue;
+
+            const percent = (current / totalDialogues) * 100;
+            progressBar.style.width = percent + '%';
+        }
+
+        // Toggle auto mode
+        function toggleAuto() {
+            autoMode = !autoMode;
+            document.getElementById('autoBtn').classList.toggle('active', autoMode);
+
+            if (autoMode && !isTyping) {
+                setTimeout(advance, 2500);
+            }
+        }
+
+        // Toggle sound
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundBtn').textContent = soundEnabled ? '🔊' : '🔇';
+            soundIndicator.classList.toggle('muted', !soundEnabled);
+
+            if (soundEnabled) {
+                ambientAudio.play().catch(e => { });
+            } else {
+                ambientAudio.pause();
+            }
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.controls') &&
+                !e.target.closest('.title-screen') &&
+                !e.target.closest('button')) {
+                advance();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                advance();
+            } else if (e.key === 'a') {
+                toggleAuto();
+            } else if (e.key === 's') {
+                toggleSound();
+            } else if (e.key === 'f') {
+                toggleFullscreen();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
